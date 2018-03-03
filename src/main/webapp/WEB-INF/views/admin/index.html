@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="/static/dao.js"></script>
+    <script src="/static/admin-index.js"></script>
+    <style>
+        .el-header, .el-footer {
+            background-color: #B3C0D1;
+            color: #333;
+            text-align: center;
+            line-height: 60px;
+        }
+
+        .el-aside {
+            background-color: #D3DCE6;
+            color: #333;
+            text-align: center;
+        }
+
+        .el-main {
+            background-color: #E9EEF3;
+            color: #333;
+        }
+
+        body > .el-container {
+            margin-bottom: 40px;
+        }
+    </style>
+</head>
+<body>
+<div id="admin-index">
+    <el-container>
+        <el-header style="padding: 0;">
+            <el-menu class="el-menu-demo" mode="horizontal"  background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+                <el-menu-item index="1" style="width: 200px;">系统管理</el-menu-item>
+                <el-row type="flex" justify="end">
+                    <el-submenu index="2">
+                        <template slot="title">我的工作台</template>
+                        <el-menu-item index="2-1" style="min-width: 0">个人中心</el-menu-item>
+                        <el-menu-item index="2-2" style="min-width: 0">退出</el-menu-item>
+                    </el-submenu>
+                </el-row>
+            </el-menu>
+        </el-header>
+        <el-container>
+            <el-aside width="200px">
+                <el-col>
+                    <el-menu style="height: 99.5%;overflow: hidden;width: 99%;" >
+                        <el-menu-item index="1" onclick="test()">用户管理</el-menu-item>
+                        <el-submenu index="2">
+                            <template slot="title">评论管理</template>
+                            <el-menu-item index="/comment">书评管理</el-menu-item>
+                            <el-menu-item index="2-2">读书笔记</el-menu-item>
+                        </el-submenu>
+                        <el-submenu index="3">
+                            <template slot="title">权限管理</template>
+                            <el-menu-item index="3-1" onclick="getRoles()">用户角色</el-menu-item>
+                            <el-menu-item index="3-2">角色权限</el-menu-item>
+                        </el-submenu>
+                        <el-submenu index="4">
+                            <template slot="title">书籍管理</template>
+                            <el-menu-item index="4-1">书籍详细</el-menu-item>
+                            <el-menu-item index="4-2">书籍类别</el-menu-item>
+                            <el-menu-item index="4-3">推荐管理</el-menu-item>
+                        </el-submenu>
+                        <el-menu-item index="5">数据字典</el-menu-item>
+                        <el-menu-item index="6">数据统计&分析</el-menu-item>
+                    </el-menu>
+                </el-col>
+            </el-aside>
+            <el-main>
+                <div id="main">
+
+                </div>
+            </el-main>
+        </el-container>
+    </el-container>
+</div>
+
+<script>
+    new Vue({
+        el: "#admin-index"
+    })
+</script>
+</body>
+</html>
