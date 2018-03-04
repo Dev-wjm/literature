@@ -38,6 +38,8 @@ public class CustomerInfo {
     private String address;
     @Column(name = "add_code")
     private String addCode;
+    @Column(name = "zip")
+    private String zip;
 
     public String getId() {
         return id;
@@ -157,5 +159,13 @@ public class CustomerInfo {
 
     public void setAddCode(String addCode) {
         this.addCode = addCode;
+    }
+
+    public String getZip() {
+        return zip;
+    }
+
+    public void setZip(String zip) {
+        this.zip = zip;
     }
 }

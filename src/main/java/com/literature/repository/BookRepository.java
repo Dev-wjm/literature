@@ -15,8 +15,17 @@ public interface BookRepository extends JpaRepository<Books,String> {
 
     Books findBooksById(String id);
 
-    @Query(value = "select * from t_books where title like %:title% ",nativeQuery = true)
+    @Query(value = "select * from t_books t where (:title is null or t.title like %:title% ) ",nativeQuery = true)
     List<Books> findBooksByTitle(@Param("title") String title);
+
+    @Query(value = "select * from t_books t where (:title is null or t.title like %:title% ) limit :page,:sizes",nativeQuery = true)
+    List<Books> find(@Param("title")String title,@Param("page")Integer page,@Param("sizes")Integer sizes);
+
+    @Query(value = "SELECT * FROM t_books b LEFT JOIN t_collections c on b.id = c.book_id WHERE c.user_id = :id AND (:title is null or b.title like %:title%)",nativeQuery = true)
+    List<Books> findCustTitle(@Param("title")String title,@Param("id")String id);
+
+    @Query(value = "SELECT * FROM t_books b LEFT JOIN t_collections c on b.id = c.book_id WHERE c.user_id = :id AND (:title is null or b.title like %:title%) limit :page,10", nativeQuery = true)
+    List<Books> findCustByUserid(@Param("title")String title,@Param("id") String id, @Param("page") Integer page);
 
     Books findBooksByAuthorIs(String author);
 

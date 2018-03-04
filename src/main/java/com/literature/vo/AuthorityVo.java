@@ -3,8 +3,8 @@ package com.literature.vo;
 import java.util.List;
 
 public class AuthorityVo {
+    private String id;
     private String rolename;
-
     private List authority;
 
     public String getRolename() {
@@ -21,5 +21,13 @@ public class AuthorityVo {
 
     public void setAuthority(List authority) {
         this.authority = authority;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

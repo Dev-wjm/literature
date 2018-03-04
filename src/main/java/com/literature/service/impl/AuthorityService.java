@@ -1,7 +1,9 @@
 package com.literature.service.impl;
 
+import com.literature.entity.Permission;
 import com.literature.entity.Role;
 import com.literature.entity.User;
+import com.literature.repository.PermissionRepository;
 import com.literature.repository.RoleRepository;
 import com.literature.repository.UserRepository;
 import com.literature.service.IAuthorityService;
@@ -23,12 +25,18 @@ public class AuthorityService implements IAuthorityService {
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private PermissionRepository permissionRepository;
 
     @Override
-    public List<UserRoleVo> findAll() {
+    public List<UserRoleVo> findUser(String username, Integer page) {
         List<UserRoleVo> ulist = new ArrayList<>();
-
-        List<User> userList = userRepository.findAll();
+        List<User> userList = new ArrayList<>();
+        if (null==page || page == 1){
+            userList = userRepository.find(username,0);
+        }else{
+            userList = userRepository.find(username,(page-1)*10);
+        }
         for (User user: userList) {
             UserRoleVo urv = new UserRoleVo();
             urv.setId(user.getId());
@@ -62,11 +70,18 @@ public class AuthorityService implements IAuthorityService {
         User user = userRepository.findUsersById(userRoleVo.getId());
         Set roleList = new HashSet();
         for (Object rolename : userRoleVo.getRoles()){
-            Role role = roleRepository.findByDescription(rolename.toString());
-            roleList.add(role);
+            if(""!=rolename.toString()){
+                Role role = roleRepository.findByDescription(rolename.toString());
+                roleList.add(role);
+            }
         }
         user.setRoleIds(roleList);
         userRepository.save(user);
+    }
+
+    @Override
+    public List<Permission> findPAll() {
+        return permissionRepository.findAll();
     }
 
     @Override
@@ -100,6 +115,21 @@ public class AuthorityService implements IAuthorityService {
             ulist.add(urv);
         }
         return ulist;
+    }
+
+    @Override
+    public void deleteUser(String id) {
+        userRepository.deleteById(id);
+    }
+
+    @Override
+    public void addUser(User user) {
+        userRepository.save(user);
+    }
+
+    @Override
+    public List<Role> findAllRole(String name, Integer page) {
+        return roleRepository.findAll(name,page);
     }
 
     @Override

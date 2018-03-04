@@ -3,10 +3,12 @@ package com.literature.repository;
 
 import com.literature.entity.Collections;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -19,4 +21,9 @@ public interface CollectionsRepository extends JpaRepository<Collections, String
     List<String> getUsersId(@Param("bookId") String bookId);
 
     Collections getByUserIdAndBookId(@Param("userId") String userId, @Param("bookId") String bookId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete from t_collections where  book_id=:bookid and  user_id=:userid",nativeQuery = true)
+    void deleteCollection(@Param("bookid") String bid,@Param("userid") String uid);
 }

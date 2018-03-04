@@ -11,8 +11,11 @@ import java.util.List;
 @Repository
 public interface RoleRepository extends JpaRepository<Role,String> {
 
-    @Query(value = "select * from sys_roles where role_name like %:name%",nativeQuery = true)
-    List<Role> findRoleByRoleName(@Param("name") String role);
+    @Query(value = "select * FROM sys_roles t WHERE (:rolename is null or t.description like %:rolename%) ",nativeQuery = true)
+    List<Role> findByDesc(@Param("rolename") String name);
+
+    @Query(value = "select * FROM sys_roles t WHERE (:rolename is null or t.description like %:rolename%) limit :page,10", nativeQuery = true)
+    List<Role> findAll(@Param("rolename")String name,@Param("page") Integer page);
 
     Role findRoleByRole(String role);
 

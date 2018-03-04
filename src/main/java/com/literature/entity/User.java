@@ -21,7 +21,7 @@ public class User implements Serializable {
     @Column(name = "salt")
     private String salt;
 
-    @ManyToMany(cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.PERSIST,fetch = FetchType.LAZY)
     @JoinTable(
             name = "sys_users_roles", // 指定中间表名
             joinColumns = {@JoinColumn(name = "user_id",referencedColumnName = "id")}, // 这里的id是sys_user表的id

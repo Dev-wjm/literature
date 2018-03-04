@@ -17,12 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Controller
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthorityController {
 
     @Autowired
@@ -34,24 +32,68 @@ public class AuthorityController {
     @Autowired
     private IUserService userService;
 
-
-    @RequestMapping("/roles")
+    @RequestMapping("/role/list")
     @ResponseBody
-    public JsonApi getAllRole() {
+    public JsonApi userRoleAll(String username,Integer page) {
+        Map map = new HashMap();
+        Integer total = authorityService.findByUsername(username).size();
+        List<UserRoleVo> userList =  authorityService.findUser(username,page);
+        map.put("total",total);
+        map.put("userList",userList);
+        return new JsonApi(map);
+    }
+
+    @RequestMapping("/role/name")
+    @ResponseBody
+    public List<String> getRoleName(String username,Integer page) {
+        List<Role> allRole = roleService.findAll();
+        List<String> roleName = new ArrayList<>();
+        for (Role role: allRole){
+            roleName.add(role.getDescription());
+        }
+        return roleName;
+    }
+
+    @RequestMapping("/role/list2")
+    @ResponseBody
+    public JsonApi getAllRole(String name,Integer page) {
         JsonApi api = new JsonApi();
-        api.setData(roleService.findAll());
+        Map map = new HashMap();
+        List<Role> roleList = new ArrayList<>();
+        if (null==page || page==1) {
+            roleList = authorityService.findAllRole(name,0);
+        }else {
+            roleList = authorityService.findAllRole(name,(page-1)*10);
+        }
+        Integer total = roleService.findByDesc(name).size();
+        map.put("total",total);
+        map.put("roleList",roleList);
+        api.setData(map);
         return api;
     }
 
-    @RequestMapping("/permission")
+    @RequestMapping("/role/update")
     @ResponseBody
-    public JsonApi getPermission(String id) {
+    public JsonApi userRoleUpdate(@RequestBody UserRoleVo params) {
         JsonApi api = new JsonApi();
-        api.setData(roleService.findRolesById(id));
+        authorityService.userRoleUpdate(params);
         return api;
     }
 
-    @RequestMapping("/update")
+    @RequestMapping("/role/delete")
+    @ResponseBody
+    public JsonApi deleteUser(String id) {
+        authorityService.deleteUser(id);
+        return new JsonApi();
+    }
+
+    @RequestMapping("/permission/List")
+    @ResponseBody
+    public List<Permission> getPermissionList() {
+        return authorityService.findPAll();
+    }
+
+    @RequestMapping("/permission/update")
     @ResponseBody
     public JsonApi updatePermissions(@RequestBody AuthorityVo params) {
         JsonApi api = new JsonApi();
@@ -65,11 +107,19 @@ public class AuthorityController {
         return api;
     }
 
-    @RequestMapping("/userRole")
+
+    @RequestMapping("/permission/get")
     @ResponseBody
-    public List<UserRoleVo> userRoleAll() {
-        return authorityService.findAll();
+    public JsonApi getPermission(String id) {
+        JsonApi api = new JsonApi();
+        api.setData(roleService.findRolesById(id));
+        return api;
     }
+
+
+
+
+
 
     @RequestMapping("/userRole/detail")
     @ResponseBody
@@ -77,13 +127,7 @@ public class AuthorityController {
         return authorityService.findByUserId(id);
     }
 
-    @RequestMapping("/userRole/update")
-    @ResponseBody
-    public JsonApi userRoleUpdate(@RequestBody UserRoleVo params) {
-        JsonApi api = new JsonApi();
-        authorityService.userRoleUpdate(params);
-        return api;
-    }
+
 
     @RequestMapping("/userRole/add")
     @ResponseBody
@@ -111,11 +155,11 @@ public class AuthorityController {
         return userService.comparePassword(id,password);
     }
 
-    @RequestMapping("/user/password")
+    @RequestMapping("/password")
     @ResponseBody
     public JsonApi updatePassword(String id, String password){
         userService.updatePassword(id,password);
-        return new JsonApi("修改成功");
+        return new JsonApi(0,"修改成功");
     }
 
 

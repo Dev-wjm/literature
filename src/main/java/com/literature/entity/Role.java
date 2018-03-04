@@ -19,7 +19,7 @@ public class Role implements Serializable {
     @Column(name = "description")
     private String description;
 
-    @ManyToMany(cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.PERSIST,fetch = FetchType.LAZY)
     @JoinTable(
             name = "sys_users_roles",
             joinColumns = {@JoinColumn(name = "role_id",referencedColumnName = "id")},

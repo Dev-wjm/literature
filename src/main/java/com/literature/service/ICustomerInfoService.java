@@ -19,4 +19,6 @@ public interface ICustomerInfoService {
     void updateCust(CustomerInfo cust);
 
     void deleteCust(String id);
+
+    List<CustomerInfo> find(String username,Integer start,Integer end);
 }

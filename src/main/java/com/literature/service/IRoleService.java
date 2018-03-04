@@ -23,7 +23,7 @@ public interface IRoleService {
      * @param roleName
      * @return
      */
-    List<Role> findRoleByName(String roleName);
+    List<Role> findByDesc(String roleName);
 
     /**
      * 查找所有角色

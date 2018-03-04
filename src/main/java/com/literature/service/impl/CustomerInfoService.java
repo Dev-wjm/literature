@@ -71,4 +71,9 @@ public class CustomerInfoService implements ICustomerInfoService {
     public void deleteCust(String id) {
         customerInfoRepository.deleteById(id);
     }
+
+    @Override
+    public List<CustomerInfo> find(String username, Integer start, Integer end) {
+        return customerInfoRepository.find(username,start,end);
+    }
 }
