@@ -23,6 +23,9 @@ public interface CommentRepository extends JpaRepository<Comments,String> {
     @Query(value = "select * from t_comment t where t.user_id = :id AND (:bookName is null or t.title like %:bookName% )", nativeQuery = true)
     List<Comments> findCustByTitle(@Param("bookName") String bookName,@Param("id")String id);
 
+    @Query(value = "select * from t_comment t where t.book_id = :id limit :page , 10", nativeQuery = true)
+    List<Comments> findCommentsByBookId(@Param("id") String id,@Param("page") Integer page);
+
     List<Comments> findByBookId(String bookId);
 
     List<Comments> findByUserId(String userId);

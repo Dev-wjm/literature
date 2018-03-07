@@ -1,8 +1,8 @@
 package com.literature.service;
 
-import com.literature.entity.Books;
-import com.literature.entity.Comments;
-import com.literature.entity.Nominate;
+import com.literature.common.JsonApi;
+import com.literature.entity.*;
+import com.literature.vo.CommentVo;
 
 import java.util.List;
 import java.util.Map;
@@ -29,6 +29,18 @@ public interface IBookService {
     // 个人用户查询
     List<Comments> findCustComment(String title,String id,Integer page,Integer size);
     List<Comments> findCustCommentByTitle(String title,String id);
+    void addComment(Comments comments);
     Map findCustBook(String title, String userid, Integer page);
     void deleteCollections(String bid,String uid);
+
+    void addCollection(Collections collections);
+
+    //推荐
+    List<Books> getBookListByNominate(Integer page);
+
+    JsonApi getBooks(String id);
+
+    List<CommentVo> getComments(String id,Integer page);
+
+
 }

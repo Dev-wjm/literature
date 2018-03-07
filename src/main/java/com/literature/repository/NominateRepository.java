@@ -10,5 +10,4 @@ import org.springframework.stereotype.Repository;
 public interface NominateRepository extends JpaRepository<Nominate,String> {
 
 
-
 }

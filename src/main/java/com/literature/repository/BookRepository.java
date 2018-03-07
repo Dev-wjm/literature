@@ -15,6 +15,13 @@ public interface BookRepository extends JpaRepository<Books,String> {
 
     Books findBooksById(String id);
 
+    // 根据评分排序
+    @Query(value = "SELECT  t1.* FROM  t_books t1 LEFT JOIN ( SELECT book_id,avg(rating) as score FROM t_comment GROUP BY book_id ) t2 ON t1.id = t2.book_id ORDER BY t2.score DESC LIMIT :page,10",nativeQuery = true)
+    List<Books> getListByRating(@Param("page")Integer page);
+    //根据收藏量排序
+    @Query(value = "SELECT t.* FROM t_books t LEFT JOIN (SELECT book_id,count(1) as collection FROM t_collections GROUP BY book_id ) t2 ON t2.book_id = t.id ORDER BY t2.collection DESC limit :page,10",nativeQuery = true)
+    List<Books> getListByCollection(@Param("page") Integer page);
+
     @Query(value = "select * from t_books t where (:title is null or t.title like %:title% ) ",nativeQuery = true)
     List<Books> findBooksByTitle(@Param("title") String title);
 
@@ -28,6 +35,9 @@ public interface BookRepository extends JpaRepository<Books,String> {
     List<Books> findCustByUserid(@Param("title")String title,@Param("id") String id, @Param("page") Integer page);
 
     Books findBooksByAuthorIs(String author);
+
+    @Query(value = "SELECT avg(rating) as score FROM t_comment GROUP BY book_id HAVING book_id =:id", nativeQuery = true)
+    String getBookRating(@Param("id")String id);
 
     Books findBooksByIbsn(String ibsn);
 

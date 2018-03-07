@@ -1,16 +1,14 @@
 package com.literature.service.impl;
 
-import com.literature.entity.Books;
-import com.literature.entity.Comments;
-import com.literature.entity.Nominate;
-import com.literature.repository.BookRepository;
-import com.literature.repository.CollectionsRepository;
-import com.literature.repository.CommentRepository;
-import com.literature.repository.NominateRepository;
+import com.literature.common.JsonApi;
+import com.literature.entity.*;
+import com.literature.repository.*;
 import com.literature.service.IBookService;
+import com.literature.vo.CommentVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +24,8 @@ public class BookService implements IBookService {
     private NominateRepository nominateRepository;
     @Autowired
     private CollectionsRepository collectionsRepository;
+    @Autowired
+    private CustomerInfoRepository customerInfoRepository;
 
     @Override
     public List<Books> find(String title, Integer page, Integer size) {
@@ -110,5 +110,64 @@ public class BookService implements IBookService {
     @Override
     public void deleteCollections(String bid, String uid) {
          collectionsRepository.deleteCollection(bid,uid);
+    }
+
+    @Override
+    public void addCollection(Collections collections) {
+        collectionsRepository.save(collections);
+    }
+
+    @Override
+    public List<Books> getBookListByNominate(Integer page) {
+        Nominate nominate = nominateRepository.findAll().get(0);
+        List<Books> bookList = new ArrayList<>();
+        if (null!=nominate && nominate.getCondition().equals("rating")) {
+            bookList = bookRepository.getListByRating(page);
+        }else if (null!=nominate && nominate.getCondition().equals("collection")) {
+            bookList = bookRepository.getListByCollection(page);
+        }else {
+            // 如果没有设置推荐条件默认评分推荐
+            bookList = bookRepository.getListByRating(page);
+        }
+        return bookList;
+    }
+
+    @Override
+    public void addComment(Comments comments) {
+        commentRepository.save(comments);
+    }
+
+    @Override
+    public JsonApi getBooks(String id) {
+        Map map = new HashMap();
+        Books books = bookRepository.findBooksById(id);
+        String score = bookRepository.getBookRating(id);
+        map.put("book",books);
+        map.put("score",score);
+        return new JsonApi(map);
+    }
+
+    @Override
+    public List<CommentVo> getComments(String id,Integer page) {
+        List<Comments> list = new ArrayList<>();
+        if (null!=page && page==1) {
+            list = commentRepository.findCommentsByBookId(id,0);
+        }else {
+            list = commentRepository.findCommentsByBookId(id,(page-1)*10);
+        }
+        List<CommentVo> commentList = new ArrayList<>();
+        for (Comments c1 :list) {
+            CustomerInfo c = customerInfoRepository.findCustomerInfoById(c1.getUserId());
+            CommentVo cv = new CommentVo();
+            cv.setId(c1.getId());
+            cv.setTitle(c1.getTitle());
+            cv.setUsername(c.getUsername());
+            cv.setUserid(c.getId());
+            cv.setContent(c1.getContent());
+            cv.setCreated(c1.getCreated());
+            cv.setRating(c1.getRating());
+            commentList.add(cv);
+        }
+        return commentList;
     }
 }

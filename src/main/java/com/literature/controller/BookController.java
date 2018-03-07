@@ -1,11 +1,7 @@
 package com.literature.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.literature.common.JsonApi;
-import com.literature.entity.Books;
-import com.literature.entity.Comments;
-import com.literature.entity.CustomerInfo;
-import com.literature.entity.Nominate;
+import com.literature.entity.*;
 import com.literature.service.IBookService;
 import com.literature.service.ICustomerInfoService;
 import com.literature.util.IDUtil;
@@ -30,6 +26,7 @@ public class BookController {
     @Autowired
     private ICustomerInfoService customerInfoService;
 
+    // 获取书籍列表
     @RequestMapping(value = "/list")
     @ResponseBody
     public JsonApi findAll(String title,Integer page) {
@@ -48,6 +45,7 @@ public class BookController {
         return api;
     }
 
+    // 获取用户收藏的书籍
     @RequestMapping(value = "/list2")
     @ResponseBody
     public JsonApi findCustAll(String title,String id,Integer page) {
@@ -179,5 +177,50 @@ public class BookController {
         bookService.setNominate(nominate);
         return api;
     }
+
+    @RequestMapping(value = "/collection/add")
+    @ResponseBody
+    public JsonApi addCollection(Collections collections) {
+        bookService.addCollection(collections);
+        return new JsonApi();
+    }
+
+    @RequestMapping(value = "/comment/add")
+    @ResponseBody
+    public JsonApi addNotes(Comments params) {
+        bookService.addComment(params);
+        return new JsonApi();
+    }
+
+    @RequestMapping(value = "/list/nominate")
+    @ResponseBody
+    public JsonApi getByNominate(Integer page) {
+        JsonApi api = new JsonApi();
+        Integer total = bookService.findBooksByTitle(null).size();
+        List<Books> bookList = new ArrayList<>();
+        if (null == page || page == 1) {
+            bookList = bookService.getBookListByNominate(0);
+        }else {
+            bookList = bookService.getBookListByNominate((page-1)*10);
+        }
+        Map map = new HashMap();
+        map.put("total",total);
+        map.put("bookList",bookList);
+        api.setData(map);
+        return api;
+    }
+
+    @RequestMapping(value = "/public/get")
+    @ResponseBody
+    public JsonApi getBoookMessage(String id) {
+        return bookService.getBooks(id);
+    }
+
+    @RequestMapping(value = "/comment/list/get")
+    @ResponseBody
+    public List<CommentVo> getComments(String id,Integer page){
+        return bookService.getComments(id,page);
+    }
+
 
 }
