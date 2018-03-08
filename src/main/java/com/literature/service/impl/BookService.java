@@ -161,13 +161,20 @@ public class BookService implements IBookService {
             CommentVo cv = new CommentVo();
             cv.setId(c1.getId());
             cv.setTitle(c1.getTitle());
-            cv.setUsername(c.getUsername());
-            cv.setUserid(c.getId());
+            if (null!=c){
+                cv.setUsername(c.getUsername());
+            }
+            cv.setUserid(c1.getUserId());
             cv.setContent(c1.getContent());
             cv.setCreated(c1.getCreated());
             cv.setRating(c1.getRating());
             commentList.add(cv);
         }
         return commentList;
+    }
+
+    @Override
+    public List<String> getUsersId(String id) {
+        return collectionsRepository.getUsersId(id);
     }
 }

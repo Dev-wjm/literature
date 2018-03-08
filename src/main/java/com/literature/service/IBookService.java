@@ -32,15 +32,13 @@ public interface IBookService {
     void addComment(Comments comments);
     Map findCustBook(String title, String userid, Integer page);
     void deleteCollections(String bid,String uid);
-
     void addCollection(Collections collections);
 
     //推荐
     List<Books> getBookListByNominate(Integer page);
-
     JsonApi getBooks(String id);
-
     List<CommentVo> getComments(String id,Integer page);
 
+    List<String> getUsersId(String id);
 
 }

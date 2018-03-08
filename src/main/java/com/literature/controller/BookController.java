@@ -2,6 +2,7 @@ package com.literature.controller;
 
 import com.literature.common.JsonApi;
 import com.literature.entity.*;
+import com.literature.entity.Collections;
 import com.literature.service.IBookService;
 import com.literature.service.ICustomerInfoService;
 import com.literature.util.IDUtil;
@@ -12,10 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping(value = "/api/book")
@@ -63,9 +61,9 @@ public class BookController {
     // 删除收藏
     @RequestMapping(value = "/collection/delete")
     @ResponseBody
-    public JsonApi deleteCollection(String bid,String uid) {
+    public JsonApi deleteCollection(String bookId,String userId) {
         JsonApi api = new JsonApi();
-        bookService.deleteCollections(bid,uid);
+        bookService.deleteCollections(bookId,userId);
         return api;
     }
 
@@ -180,14 +178,17 @@ public class BookController {
 
     @RequestMapping(value = "/collection/add")
     @ResponseBody
-    public JsonApi addCollection(Collections collections) {
-        bookService.addCollection(collections);
+    public JsonApi addCollection(@RequestBody Collections params) {
+        params.setId(IDUtil.getId());
+        bookService.addCollection(params);
         return new JsonApi();
     }
 
     @RequestMapping(value = "/comment/add")
     @ResponseBody
-    public JsonApi addNotes(Comments params) {
+    public JsonApi addNotes(@RequestBody Comments params) {
+        params.setId(IDUtil.getId());
+        params.setCreated(new Date());
         bookService.addComment(params);
         return new JsonApi();
     }
@@ -220,6 +221,11 @@ public class BookController {
     @ResponseBody
     public List<CommentVo> getComments(String id,Integer page){
         return bookService.getComments(id,page);
+    }
+
+    @RequestMapping(value = "/collection/userList")
+    @ResponseBody List<String> getUserList(String id) {
+        return bookService.getUsersId(id);
     }
 
 

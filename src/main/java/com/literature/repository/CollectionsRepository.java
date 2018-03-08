@@ -26,4 +26,6 @@ public interface CollectionsRepository extends JpaRepository<Collections, String
     @Transactional
     @Query(value = "delete from t_collections where  book_id=:bookid and  user_id=:userid",nativeQuery = true)
     void deleteCollection(@Param("bookid") String bid,@Param("userid") String uid);
+
+
 }
